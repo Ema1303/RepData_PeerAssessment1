@@ -31,7 +31,8 @@ The **goal** of this assignment is to write a report that answers the following 
 
 First, the CSV file that contains 17,568 observations will be loaded by using *read.csv()*.
 
-```{r}
+
+```r
 activity_data <- read.csv("activity.csv", head = TRUE, sep = ",")
 ```
 
@@ -39,20 +40,38 @@ Before I continue with the assignment, I want to find out more about the content
 
 First, I will check the names of columns by using *names()*.
 
-```{r, echo=TRUE}
+
+```r
 names(activity_data)
+```
+
+```
+## [1] "steps"    "date"     "interval"
 ```
 
 Then I will display the internal structure of the activity_data object by using *str()*.
 
-```{r, echo=TRUE}
+
+```r
 str(activity_data)
+```
+
+```
+## 'data.frame':	17568 obs. of  3 variables:
+##  $ steps   : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ date    : Factor w/ 61 levels "2012-10-01","2012-10-02",..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
 ```
 
 What I can see from the structure displayed above, is that data belonging to the *steps* column are class integer (note that I could also check this by calling *class(activity_data$steps)*). I also know that there will be some missing values (NA) in this dataset. 
 
-```{r, echo=TRUE}
+
+```r
 class(activity_data$steps)
+```
+
+```
+## [1] "integer"
 ```
 
 I can also see that dates are class factor and written in the following format: YYYY-MM-DD.
@@ -65,15 +84,26 @@ Now that I know how my data looks like, I can continue with the assignment.
 
 For this part of the assignment, I will first calculate the total number of steps taken per day by using *aggregate()* and ignore the missing values (NA) in the dataset by using *na.omit()*.
 
-```{r, echo=TRUE}
+
+```r
  steps_per_day <- na.omit(aggregate(activity_data$steps, list(date = activity_data$date), FUN = sum))
 ```
 
 Once I run the code, I can see how many steps a person has made each day. Below you can see a total number of steps (*x*) for the first five days: 
 
 
-```{r, echo=TRUE}
+
+```r
  head(steps_per_day, 5)
+```
+
+```
+##         date     x
+## 2 2012-10-02   126
+## 3 2012-10-03 11352
+## 4 2012-10-04 12116
+## 5 2012-10-05 13294
+## 6 2012-10-06 15420
 ```
 
 Since for the 2012-10-01 we had a not available (NA) number of steps for all intervals, the whole day is skipped from the calculation. I cannot assume that a person made 0 steps, so I will not assign 0 to day 1 (2012-10-01). The following day (2012-10-02), the person made 117 steps in the interval 2210 and 9 steps in the interval 2215, which sums up to (in total) **126** steps taken on the day 2012-10-02.
@@ -81,12 +111,15 @@ Since for the 2012-10-01 we had a not available (NA) number of steps for all int
 
 Then I will make a histogram of the total number of steps taken each day.
 
-```{r, echo=TRUE}
+
+```r
 barplot(steps_per_day$x, 
         main="Steps per day", 
         names.arg = steps_per_day$date,
         xlab="Date")
 ```
+
+![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png) 
 
 
 To calculate the mean and median total number of steps per day, I will need the following 2 R functions:
@@ -96,13 +129,23 @@ To calculate the mean and median total number of steps per day, I will need the 
 
 I will find the mean of the number of steps taken daily:
 
-```{r, echo=TRUE}
+
+```r
 mean(steps_per_day$x)
 ```
 
+```
+## [1] 10766.19
+```
+
 I will do the same to find the median:
-```{r, echo=TRUE}
+
+```r
 median(steps_per_day$x)
+```
+
+```
+## [1] 10765
 ```
 
 ##What is the average daily activity pattern?
@@ -110,7 +153,8 @@ median(steps_per_day$x)
 To make a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis) I will use *plot()* type "l". But first I have to find the average number of steps per a five-minute interval. To do this, I will use *aggregate()*.
 
 
-```{r, echo=TRUE}
+
+```r
 pattern <- aggregate(list(steps = activity_data$steps), list(interval = activity_data$interval),
           FUN = mean, na.rm=TRUE)
 
@@ -119,16 +163,23 @@ plot(pattern,
   xlab = "5-minute interval", 
   ylab = "Average number of steps",
   col = "blue")
-
 ```
+
+![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png) 
 
 Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 From the plot above, I can see that this must be an interval between 500 and 1000 and that the maximum number of steps taken must be a number larger than 200. Let's find the exact number of max steps and the exact interval. 
 
-```{r, echo=TRUE}
+
+```r
 which_interval <- pattern[pattern$steps == max(pattern$steps), ]
 which_interval
+```
+
+```
+##     interval    steps
+## 104      835 206.1698
 ```
 
 **Answer:** maximum average number of steps taken is 206.1698, in the interval 835.
@@ -137,39 +188,65 @@ which_interval
 
 Now I will calculate and report the total number of missing values in the dataset (number of rows with NA):
 
-```{r, echo=TRUE}
+
+```r
 sum(is.na(activity_data))
+```
+
+```
+## [1] 2304
 ```
 
 To keep the original csv file unchanged, I will duplicate the original file and save it under name activity_copy.csv.
 
-```{r}
+
+```r
 file.copy("activity.csv", "activity_copy.csv")
+```
+
+```
+## [1] TRUE
+```
+
+```r
 activity_data_copy <- read.csv("activity_copy.csv", head = TRUE, sep = ",")
 ```
 
 To find a mean for each 5-minute interval, I will used *tapply()*.
 
-```{r, echo=TRUE}
+
+```r
 mean_per_interval <-tapply(activity_data$steps, activity_data$interval, mean, na.rm=TRUE)
 ```
 
 If I want to check the mean for, let's say, first two intervals (interval at the 0th minute and 5th minute), I will call *mean_per_interval[c(1,2)]*.
 
-```{r, echo=TRUE}
+
+```r
 mean_per_interval[c(1,2)]
+```
+
+```
+##         0         5 
+## 1.7169811 0.3396226
 ```
 
 Now that I have mean values for all intervals, I have to replace the NA values in my dataset with the obtained means.
 First I will find out how many intervals each day consists of:
 
-```{r, echo=TRUE}
+
+```r
 sum(activity_data$date == "2012-10-01")
+```
+
+```
+## [1] 288
 ```
 
 The answer is 288.
 
-```{r}
+
+```r
 for (i in which(is.na(activity_data_copy)))
 {
   activity_data_copy[i,1] <- mean_per_interval[((i-1)%%288)+1]
@@ -178,44 +255,67 @@ for (i in which(is.na(activity_data_copy)))
 
 I will save the new values into the copy of the original activity.csv file that I have created earlier (activity_copy.csv).
 
-```{r}
+
+```r
 write.csv(activity_data_copy, file="activity_copy.csv")
 ```
 
 Now I can finally find the number of steps taken per day, once the NA values have been replaced by mean values. 
 
-```{r,echo=TRUE}
 
+```r
 steps_per_day1 <- aggregate(activity_data_copy$steps, list(date = activity_data_copy$date), FUN = sum)
 
 # sum of steps once the NA values have been removed
 sum(activity_data_copy$steps)
+```
 
+```
+## [1] 656737.5
+```
+
+```r
 # sum of steps prior NA removal
 sum(activity_data$steps, na.rm=TRUE)
+```
+
+```
+## [1] 570608
 ```
 
 The results above indicate that once we removed the NA values, it appears as if a person has taken in total more steps (656737.5 > 570608). 
 
 I can also plot the number of steps.
 
-```{r,echo=TRUE}
 
+```r
 barplot(steps_per_day1$x, 
         main="Steps per day without NA", 
         names.arg = steps_per_day1$date,
         xlab="Date")
 ```
 
+![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20-1.png) 
+
 To calculate the mean:
 
-```{r, echo=TRUE}
+
+```r
 mean(steps_per_day1$x)
 ```
 
+```
+## [1] 10766.19
+```
+
 To calculate the median:
-```{r, echo=TRUE}
+
+```r
 median(steps_per_day1$x)
+```
+
+```
+## [1] 10766.19
 ```
 
 As seen above, now mean and median are the same (both 10766.19), meaning that the data is evenly divided around the mean. As I replaced the NA values by means for each interval, this outcome was to be expected.
@@ -224,8 +324,16 @@ As seen above, now mean and median are the same (both 10766.19), meaning that th
 
 To find whether there are any differences in activity patterns between weekdays and weekends, I have to extract weekdays by using *weekdays()* function. Since dates in my dataset are class *factor*, I have to first transform the data into POSIXt. First, I will set locale to English. Then I will transform factor to POSIXt. Once transformed, I will update my data.frame's column "date" with POSIXt data. The results obtained after calling the *weekdays()* function are saved to a character vector called *days*. Then I will add the names of the weekdays into my data.frame by creating an additional column called "days".
 
-```{r, echo=TRUE}
+
+```r
 Sys.setlocale("LC_TIME", "English")
+```
+
+```
+## [1] "English_United States.1252"
+```
+
+```r
 new_dates <- strptime(activity_data_copy$date, "%Y-%m-%d")
 activity_data_copy$date <- new_dates
 days <- weekdays(activity_data_copy$date)
@@ -234,7 +342,8 @@ activity_data_copy[, "days"] <- days
 
 Now I will add another column into the data.frame called "weekday_weekend" and write in "weekday"" if a value in the "days" column corresponds to Monday, Tuesday, Wednesday, Thursday or Friday, and "weekend" if the days are Saturday or Sunday. To do this, I will use a *for* loop which goes through the whole data.frame.
 
-```{r, echo=TRUE}
+
+```r
 for(i in (1:nrow(activity_data_copy))){
   
   if(activity_data_copy$days[i] %in% c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday"))
@@ -250,7 +359,8 @@ for(i in (1:nrow(activity_data_copy))){
 
 Finally, to save my results into the csv file, I will write the results into the copy of the original file (activity_copy.csv).
 
-```{r, echo=TRUE}
+
+```r
 write.csv(activity_data_copy, file = "activity_copy.csv")
 ```
 
@@ -258,18 +368,19 @@ The final task is to make a panel plot containing a time series plot (i.e. type 
 
 First, let's find the average number of steps taken on weekdays and weekends, and let's also prepare a dataset "average_steps" so that it contains three columns, namely "weekend_weekday", "interval", and "avg_steps".
 
-```{r, echo=TRUE}
+
+```r
 average_steps <- aggregate(activity_data_copy$steps, by = list(activity_data_copy$weekday_weekend, activity_data_copy$interval), FUN = mean, na.rm = TRUE)
 
 names(average_steps)[1] <- "weekday_weekend"
 names(average_steps)[2] <- "interval"
 names(average_steps)[3] <- "avg_steps"
-
 ```
 
 Once the dataset is ready, we can plot the average number of steps taken on weekends and weekdays by using *xyplot()* with a 5-minute interval on the x-axis and average number of steps on the y-axis. 
 
-```{r, echo=TRUE}
+
+```r
 library(lattice)
 xyplot( avg_steps ~ interval | weekday_weekend, 
         data = average_steps, 
@@ -279,5 +390,7 @@ xyplot( avg_steps ~ interval | weekday_weekend,
         xlab="Interval", 
         ylab="Number of steps")
 ```
+
+![plot of chunk unnamed-chunk-27](figure/unnamed-chunk-27-1.png) 
 
 Based on the graph above, it appears that there have been more steps taken during the weekend. The highest average number of steps has, however, been taken during the weekday (notice the highest peak of the line graph for weekdays).
