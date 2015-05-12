@@ -27,7 +27,37 @@ The **goal** of this assignment is to write a report that answers the following 
 
 ## Loading and preprocessing the data
 
+First, the CSV file that contains 17,568 observations will be loaded by using *read.csv()*.
 
+```{r}
+activity_data <- read.csv("activity.csv", head = TRUE, sep = ",")
+```
+
+Before I continue with the assignment, I want to find out more about the contents of the CSV file. 
+
+First, I will check the names of columns by using *names()*.
+
+```{r, echo=TRUE}
+names(activity_data)
+```
+
+Then I will display the internal structure of the activity_data object by using *str()*.
+
+```{r, echo=TRUE}
+str(activity_data)
+```
+
+What I can see from the structure displayed above, is that data belonging to the *steps* column are class integer (note that I could also check this by calling *class(activity_data$steps)*). I also know that there will be some missing values (NA) in this dataset. 
+
+```{r, echo=TRUE}
+class(activity_data$steps)
+```
+
+I can also see that dates are class factor and written in the following format: YYYY-MM-DD.
+
+Interval holds integers and no NA values.
+
+Now that I know how my data looks like, I can continue with the assignment.
 
 ## What is mean total number of steps taken per day?
 
