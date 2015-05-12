@@ -61,6 +61,46 @@ Now that I know how my data looks like, I can continue with the assignment.
 
 ## What is mean total number of steps taken per day?
 
+For this part of the assignment, I will first calculate the total number of steps taken per day by using *aggregate()* and ignore the missing values (NA) in the dataset by using *na.omit()*.
+
+```{r, echo=TRUE}
+ steps_per_day <- na.omit(aggregate(activity_data$steps, list(date = activity_data$date), FUN = sum))
+```
+
+Once I run the code, I can see how many steps a person has made each day. Below you can see a total number of steps (*x*) for the first five days: 
+
+
+```{r, echo=TRUE}
+ head(steps_per_day, 5)
+```
+
+Since for the 2012-10-01 we had a not available (NA) number of steps for all intervals, the whole day is skipped from the calculation. I cannot assume that a person made 0 steps, so I will not assign 0 to day 1 (2012-10-01). The following day (2012-10-02), the person made 117 steps in the interval 2210 and 9 steps in the interval 2215, which sums up to (in total) **126** steps taken on the day 2012-10-02.
+
+
+Then I will make a histogram of the total number of steps taken each day.
+
+```{r, echo=TRUE}
+barplot(steps_per_day$x, 
+        main="Steps per day", 
+        names.arg = steps_per_day$date,
+        xlab="Date")
+```
+
+To calculate the mean and median total number of steps per day, I will need the following 2 R functions:
+
+- *mean()*
+- *median()*
+
+I will find the mean of the number of steps taken daily:
+
+```{r, echo=TRUE}
+mean(steps_per_day$x)
+```
+
+I will do the same to find the median:
+```{r, echo=TRUE}
+median(steps_per_day$x)
+```
 
 
 ## What is the average daily activity pattern?
