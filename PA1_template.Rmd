@@ -4,7 +4,26 @@ output:
   html_document:
     keep_md: true
 ---
+##Summary of the assignment
 
+This assignment makes use of data from a personal activity monitoring device, such as Fitbit, Nike Fuelband, or Jawbone Up, which collects data at 5 minute intervals throughout the day. The data consists of two months of data from an anonymous individual collected during the months of October and November 2012, and include the number of steps taken in 5 minute intervals each day.
+
+The variables included in this dataset are:
+
+- steps: Number of steps taking in a 5-minute interval (missing values are coded as NA)
+- date: The date on which the measurement was taken in YYYY-MM-DD format
+- interval: Identifier for the 5-minute interval in which measurement was taken
+
+The dataset is stored in a CSV file and there are a total of 17,568 observations in this dataset.
+
+
+The **goal** of this assignment is to write a report that answers the following questions:
+
+1. Loading and preprocessing the data
+2. What is mean total number of steps taken per day?
+3. What is the average daily activity pattern?
+4. Imputing missing values
+5. Are there differences in activity patterns between weekdays and weekends?
 
 ## Loading and preprocessing the data
 
