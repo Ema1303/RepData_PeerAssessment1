@@ -191,7 +191,7 @@ which_interval
 
 **Answer:** maximum average number of steps taken is 206.1698, in the interval 835 (8:35 AM). Since the data is measured during the whole week (5 weekdays, 2 weekend days), we can conclude that the reason why a person takes a maximum number of steps at 8:35 AM is because this person probably walks to work. If our person works 8 hours a day, then it is to be assumed that he/she goes back home at around 17 h (works from 9-17 h). Since in this interval we don't have as many steps as in the morning, we could assume that our person either takes some public transport to go back home, regularly walks a short distance before meeting a colleague for a drink or regularly visits a supermarket on the way back home. After 20:00 h (interval 2000), there is a visible decrease in the number of steps (which indicates that the person is most likely relaxing at home). Also, in the interval 0-500 (midnight to 5 AM) there are hardly any steps taken, i.e. person must be sleeping. So far, the plot and the data represented on it make sense and depict a usual behavioral pattern of a person that has a job (or regular education during the week from 9-17). 
 
-Let´s also add a green line representing the maximum number of steps on average taken for all days and a red line representing the interval when the maximum number of steps on average was taken.
+LetÂ´s also add a green line representing the maximum number of steps on average taken for all days and a red line representing the interval when the maximum number of steps on average was taken.
 
 
 ```r
@@ -206,7 +206,7 @@ abline(h = which_interval$steps, col = "green", lty = 1)
 
 ![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png) 
 
-The plot above indicates that the average number of steps increases in the interval [500-1000] and then decreases starting at approx. interval [1800-2355].  
+The plot above indicates that the average number of steps increases in the interval [5:00-10:00] and then decreases starting at approx. interval [18:00-23:55].  
 
 ##Imputing missing values
 
