@@ -1,9 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 ##Summary of the assignment
 
 This assignment makes use of data from a personal activity monitoring device, such as Fitbit, Nike Fuelband, or Jawbone Up, which collects data at 5 minute intervals throughout the day. The data consists of two months of data from an anonymous individual collected during the months of October and November 2012, and include the number of steps taken in 5 minute intervals each day.
@@ -38,18 +33,7 @@ activity_data <- read.csv("activity.csv", head = TRUE, sep = ",")
 
 Before I continue with the assignment, I want to find out more about the contents of the CSV file. 
 
-First, I will check the names of columns by using *names()*.
-
-
-```r
-names(activity_data)
-```
-
-```
-## [1] "steps"    "date"     "interval"
-```
-
-Then I will display the internal structure of the activity_data object by using *str()*.
+First I will display the internal structure of the activity_data object by using *str()*.
 
 
 ```r
@@ -76,7 +60,7 @@ class(activity_data$steps)
 
 I can also see that dates are class factor and written in the following format: YYYY-MM-DD.
 
-Interval holds integers and no NA values.
+Interval holds integers starting from 0 to 2355 for each day and holds no NA values. Now, these 5-minute intervals can be interpreted as hour:minute of each day. For example, 0 could mean midnight, 1000 could mean 10 AM (10:00), 2015 can mean 20:15 (or 8:15 PM), with the last 5-minute interval being 23:55 (11:55 PM). Since 0-2355 repeats for each day, I will interpret my results accordingly.
 
 Now that I know how my data looks like, I can continue with the assignment.
 
@@ -106,47 +90,51 @@ Once I run the code, I can see how many steps a person has made each day. Below 
 ## 6 2012-10-06 15420
 ```
 
-Since for the 2012-10-01 we had a not available (NA) number of steps for all intervals, the whole day is skipped from the calculation. I cannot assume that a person made 0 steps, so I will not assign 0 to day 1 (2012-10-01). The following day (2012-10-02), the person made 117 steps in the interval 2210 and 9 steps in the interval 2215, which sums up to (in total) **126** steps taken on the day 2012-10-02.
+Since for the 2012-10-01 we had a not available (NA) number of steps for all intervals, the whole day is skipped from the calculation. I cannot assume that a person made 0 steps, so I will not assign 0 to day 1 (2012-10-01). The following day (2012-10-02), the person made 117 steps in the interval 2210 and 9 steps in the interval 2215 (based on the information in the *activity_data*), which sums up to (in total) **126** steps taken on the day 2012-10-02.
 
 
-Then I will make a histogram of the total number of steps taken each day.
+Then I will make a histogram of the total number of steps taken each day and find mean and meadian of the number of steps taken daily. To calculate the mean and median, I will need the following 2 R functions:
+
+- *mean()*
+- *median()*
 
 
 ```r
 barplot(steps_per_day$x, 
         main="Steps per day", 
         names.arg = steps_per_day$date,
-        xlab="Date")
-```
+        xlab="Date",
+        ylab = "Frequency")
 
-![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png) 
+mean_step <- mean(steps_per_day$x)
+median_step <- median(steps_per_day$x)
 
-
-To calculate the mean and median total number of steps per day, I will need the following 2 R functions:
-
-- *mean()*
-- *median()*
-
-I will find the mean of the number of steps taken daily:
-
-
-```r
-mean(steps_per_day$x)
+# I will call mean_step and median_step to print out the values for mean and median
+mean_step
 ```
 
 ```
 ## [1] 10766.19
 ```
 
-I will do the same to find the median:
-
 ```r
-median(steps_per_day$x)
+median_step
 ```
 
 ```
 ## [1] 10765
 ```
+
+```r
+# since the difference between mean and median is not large, green horizontal dotted line representing median is so close to the red dotten line representing mean that it can barely be seen on the plot
+abline(h=median_step,col="green",lty=3)
+abline(h=mean_step,col="red",lty=3)
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
+
+
+Mean is **10766.19** and median is **10765**, which indicates that we are deadling with a right skewed, non-symmetric, distribution (mean is larger than median). In praxis, this is often the case (many distributions that occur in praxis are skewed, not symmetric). 
 
 ##What is the average daily activity pattern?
 
@@ -157,19 +145,33 @@ To make a time series plot of the 5-minute interval (x-axis) and the average num
 ```r
 pattern <- aggregate(list(steps = activity_data$steps), list(interval = activity_data$interval),
           FUN = mean, na.rm=TRUE)
-
-plot(pattern,  
-  type = "l",
-  xlab = "5-minute interval", 
-  ylab = "Average number of steps",
-  col = "blue")
 ```
 
-![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png) 
+Object *pattern* consists of two columns:
+
+- interval: lists 5-minute intervals
+
+- steps: average number of steps averaged across all days
+
+
+Let's check the average number of steps taken in the first five intervals:
+
+```r
+head(pattern,5)
+```
+
+```
+##   interval     steps
+## 1        0 1.7169811
+## 2        5 0.3396226
+## 3       10 0.1320755
+## 4       15 0.1509434
+## 5       20 0.0754717
+```
 
 Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
-From the plot above, I can see that this must be an interval between 500 and 1000 and that the maximum number of steps taken must be a number larger than 200. Let's find the exact number of max steps and the exact interval. 
+From the plot, I can see that this must be an interval between 500 and 1000 (or 5:00 and 10:00 AM) and that the maximum number of steps taken must be a number larger than 200. Let's find the exact number of max steps and the exact interval. 
 
 
 ```r
@@ -182,7 +184,24 @@ which_interval
 ## 104      835 206.1698
 ```
 
-**Answer:** maximum average number of steps taken is 206.1698, in the interval 835.
+**Answer:** maximum average number of steps taken is 206.1698, in the interval 835 (8:35 AM). Since the data is measured during the whole week (5 weekdays, 2 weekend days), we can conclude that the reason why a person takes a maximum number of steps at 8:35 AM is because this person probably walks to work. If our person works 8 hours a day, then it is to be assumed that he/she goes back home at around 17 h (works from 9-17 h). Since in this interval we don't have as many steps as in the morning, we could assume that our person either takes some public transport to go back home, regularly walks a short distance before meeting a colleague for a drink or regularly visits a supermarket on the way back home. After 20:00 h (interval 2000), there is a visible decrease in the number of steps (which indicates that the person is most likely relaxing at home). Also, in the interval 0-500 (midnight to 5 AM) there are hardly any steps taken, i.e. person must be sleeping. So far, the plot and the data represented on it make sense and depict a usual behavioral pattern of a person that has a job (or regular education during the week from 9-17). 
+
+Let´s also add a green line representing the maximum number of steps on average taken for all days and a red line representing the interval when the maximum number of steps on average was taken.
+
+
+```r
+plot(pattern,  
+  type = "l",
+  xlab = "5-minute interval", 
+  ylab = "Average number of steps",
+  col = "blue")
+abline(v = which_interval$interval, col = "red", lty = 1)
+abline(h = which_interval$steps, col = "green", lty = 1)
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-10-1.png) 
+
+The plot above indicates that the average number of steps increases in the interval [500-1000] and then decreases starting at approx. interval [1800-2355].  
 
 ##Imputing missing values
 
@@ -205,7 +224,7 @@ file.copy("activity.csv", "activity_copy.csv")
 ```
 
 ```
-## [1] TRUE
+## [1] FALSE
 ```
 
 ```r
@@ -243,7 +262,8 @@ sum(activity_data$date == "2012-10-01")
 ## [1] 288
 ```
 
-The answer is 288.
+The answer is 288. This makes sense. A short explanation: 288 intervals * 5 minutes = 1440 minutes a day. 1440 / 60 = 24 hours (1 day).
+I will replace the NA values with the obtained means by checking where in my dataset NA values are. When NA is found, write a mean value for that specific interval in place of NA.
 
 
 ```r
@@ -260,7 +280,7 @@ I will save the new values into the copy of the original activity.csv file that 
 write.csv(activity_data_copy, file="activity_copy.csv")
 ```
 
-Now I can finally find the number of steps taken per day, once the NA values have been replaced by mean values. 
+Now I can finally find the number of steps taken per day, once the NA values have been replaced by mean values. This information will be stored in *steps_per_day1* (nothing fancy with naming, I just added 1 after steps_per_day).
 
 
 ```r
@@ -292,31 +312,37 @@ I can also plot the number of steps.
 barplot(steps_per_day1$x, 
         main="Steps per day without NA", 
         names.arg = steps_per_day1$date,
-        xlab="Date")
+        xlab="Date",
+        ylab = "Frequency")
+
+# Calculate mean and median steps
+mean_steps1 <- mean(steps_per_day1$x)
+median_steps1 <- median(steps_per_day1$x)
+
+# What is the mean?
+mean_steps1
 ```
 
-![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20-1.png) 
-
-To calculate the mean:
-
+```
+## [1] 10766.19
+```
 
 ```r
-mean(steps_per_day1$x)
+# What is the median?
+median_steps1
 ```
 
 ```
 ## [1] 10766.19
 ```
 
-To calculate the median:
-
 ```r
-median(steps_per_day1$x)
+# since mean and median are the same, I will plot just one of the two (I chose to plot mean)
+abline(h=mean_steps1, col="red", lty=1)
 ```
 
-```
-## [1] 10766.19
-```
+![](PA1_template_files/figure-html/unnamed-chunk-19-1.png) 
+
 
 As seen above, now mean and median are the same (both 10766.19), meaning that the data is evenly divided around the mean. As I replaced the NA values by means for each interval, this outcome was to be expected.
 
@@ -353,7 +379,7 @@ for(i in (1:nrow(activity_data_copy))){
     {activity_data_copy[i, "weekday_weekend"]  <- "weekend"}
     
   else
-   "there was some mistake"
+   print("there was some mistake")
 }
 ```
 
@@ -391,6 +417,35 @@ xyplot( avg_steps ~ interval | weekday_weekend,
         ylab="Number of steps")
 ```
 
-![plot of chunk unnamed-chunk-27](figure/unnamed-chunk-27-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-24-1.png) 
 
-Based on the graph above, it appears that there have been more steps taken during the weekend. The highest average number of steps has, however, been taken during the weekday (notice the highest peak of the line graph for weekdays).
+Based on the graph above, it appears that the person likes to sleep longer/has a more relaxing morning on the weekends than at the weekdays (notice the number of steps taken in the interval 0-500, or midnight to 5 AM). What we can also see is that the person makes the most steps on weekdays between 8 and 9 AM (probably walks to the office) and after 20:00 the number of steps decreases, i.e. the person is relaxing at home. In general, there are more steps taken during the day on Saturday and Sunday as compared to the number of steps taken during the weekday at the same period of time. One possible explanation is that the person sits in the office during the weekdays, while being more active in terms of walking during the weekend. 
+
+
+```r
+# number of average steps taken on weekends
+steps_weekend <- na.omit(subset(average_steps, weekday_weekend == "weekend"))
+sum_weekend <- sum(steps_weekend$avg_steps)
+
+# how many steps in total per weekend
+sum_weekend
+```
+
+```
+## [1] 12201.52
+```
+
+```r
+# number of average steps taken on weekdays
+steps_weekday <- na.omit(subset(average_steps, weekday_weekend == "weekday"))
+sum_weekday <- sum(steps_weekday$avg_steps)
+
+# how many steps in total per weekday
+sum_weekday
+```
+
+```
+## [1] 10255.85
+```
+
+From the calculation above, we can also conclude that the person takes on average more steps during the weekend than during the workdays. Based on the information found at http://walking.about.com/od/measure/a/averagesteps.htm, men take an average of 7192 steps per day, while women take an average of 5210 steps per day. Since our test person takes on average 11228 steps per day [(12201.52 + 10255.85)/2], we can conclude that this person has quite an active lifestyle.
