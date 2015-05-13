@@ -1,4 +1,9 @@
-# Reproducible Research: Peer Assessment 1
+---
+title: "Reproducible Research: Peer Assessment 1"
+output: 
+  html_document:
+    keep_md: true
+---
 ##Summary of the assignment
 
 This assignment makes use of data from a personal activity monitoring device, such as Fitbit, Nike Fuelband, or Jawbone Up, which collects data at 5 minute intervals throughout the day. The data consists of two months of data from an anonymous individual collected during the months of October and November 2012, and include the number of steps taken in 5 minute intervals each day.
@@ -131,7 +136,7 @@ abline(h=median_step,col="green",lty=3)
 abline(h=mean_step,col="red",lty=3)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png) 
 
 
 Mean is **10766.19** and median is **10765**, which indicates that we are deadling with a right skewed, non-symmetric, distribution (mean is larger than median). In praxis, this is often the case (many distributions that occur in praxis are skewed, not symmetric). 
@@ -186,7 +191,7 @@ which_interval
 
 **Answer:** maximum average number of steps taken is 206.1698, in the interval 835 (8:35 AM). Since the data is measured during the whole week (5 weekdays, 2 weekend days), we can conclude that the reason why a person takes a maximum number of steps at 8:35 AM is because this person probably walks to work. If our person works 8 hours a day, then it is to be assumed that he/she goes back home at around 17 h (works from 9-17 h). Since in this interval we don't have as many steps as in the morning, we could assume that our person either takes some public transport to go back home, regularly walks a short distance before meeting a colleague for a drink or regularly visits a supermarket on the way back home. After 20:00 h (interval 2000), there is a visible decrease in the number of steps (which indicates that the person is most likely relaxing at home). Also, in the interval 0-500 (midnight to 5 AM) there are hardly any steps taken, i.e. person must be sleeping. So far, the plot and the data represented on it make sense and depict a usual behavioral pattern of a person that has a job (or regular education during the week from 9-17). 
 
-LetÂ´s also add a green line representing the maximum number of steps on average taken for all days and a red line representing the interval when the maximum number of steps on average was taken.
+Let´s also add a green line representing the maximum number of steps on average taken for all days and a red line representing the interval when the maximum number of steps on average was taken.
 
 
 ```r
@@ -199,7 +204,7 @@ abline(v = which_interval$interval, col = "red", lty = 1)
 abline(h = which_interval$steps, col = "green", lty = 1)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-10-1.png) 
+![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png) 
 
 The plot above indicates that the average number of steps increases in the interval [500-1000] and then decreases starting at approx. interval [1800-2355].  
 
@@ -341,7 +346,7 @@ median_steps1
 abline(h=mean_steps1, col="red", lty=1)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-19-1.png) 
+![plot of chunk unnamed-chunk-19](figure/unnamed-chunk-19-1.png) 
 
 
 As seen above, now mean and median are the same (both 10766.19), meaning that the data is evenly divided around the mean. As I replaced the NA values by means for each interval, this outcome was to be expected.
@@ -417,7 +422,7 @@ xyplot( avg_steps ~ interval | weekday_weekend,
         ylab="Number of steps")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-24-1.png) 
+![plot of chunk unnamed-chunk-24](figure/unnamed-chunk-24-1.png) 
 
 Based on the graph above, it appears that the person likes to sleep longer/has a more relaxing morning on the weekends than at the weekdays (notice the number of steps taken in the interval 0-500, or midnight to 5 AM). What we can also see is that the person makes the most steps on weekdays between 8 and 9 AM (probably walks to the office) and after 20:00 the number of steps decreases, i.e. the person is relaxing at home. In general, there are more steps taken during the day on Saturday and Sunday as compared to the number of steps taken during the weekday at the same period of time. One possible explanation is that the person sits in the office during the weekdays, while being more active in terms of walking during the weekend. 
 
